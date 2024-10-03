@@ -1,0 +1,7 @@
+---
+- name: Disable root and set new users
+  hosts: all
+  become: true
+
+  roles:
+    - set_new_users.yml
