@@ -4,4 +4,5 @@
   become: true
 
   roles:
-    - set_new_users.yml
+    - disable_root
+    - create_admin_users

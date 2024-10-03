@@ -1,0 +1,35 @@
+---
+- name: Copy user bashrc
+  copy:
+    src: files/user_bashrc
+    dest: /etc/skel/.bashrc
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy root bashrc
+  copy:
+    src: files/root_bashrc
+    dest: /root/.bashrc
+    owner: root
+    group: root
+    mode: '0644'
+
+
+## в директории каждого пользователя
+# - name: Copy .psqlrc to /etc/skel
+#   copy:
+#     src: files/.psqlrc
+#     dest: /etc/skel/.psqlrc
+#     owner: root
+#     group: root
+#     mode: '0644'
+
+## в директорию каждого пользователя
+# - name: Copy .inputrc to /etc/skel
+#   copy:
+#     src: files/.inputrc
+#     dest: /etc/skel/.inputrc
+#     owner: root
+#     group: root
+#     mode: '0644'

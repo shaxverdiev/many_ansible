@@ -1,0 +1,9 @@
+---
+base_packages:
+  - vim
+  - tree
+  - curl
+  - wget
+  - net-tools
+  - util-linux
+  # - docker.io

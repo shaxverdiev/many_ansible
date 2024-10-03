@@ -2,7 +2,7 @@
 # sudo apt-get install sshpass 
 
 ##### несколько хостов (хосты указаны в inventory)
-# ansible-playbook test_nginx.yml -Kk (-K пароль для подключения через ssh, -k пароль пользователя sudo)
+# ansible-playbook playbooks/test_nginx.yml -Kk (-K пароль для подключения через ssh, -k пароль пользователя sudo)
 
 ##### один хост
 # ansible-playbook -i 192.168.122.184, --user=administrator playbooks/test_nginx.yml -Kk
