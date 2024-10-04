@@ -1,0 +1,13 @@
+---
+- name: Copy sshd_config (disable root and password access)
+  copy:
+    src: files/sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart ssh
+  service:
+    name: ssh
+    state: restarted

@@ -1,8 +1,0 @@
----
-- name: Disable root and set new users
-  hosts: all
-  become: true
-
-  roles:
-    - disable_root
-    - create_admin_users

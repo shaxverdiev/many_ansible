@@ -1,5 +1,5 @@
 ---
-- name: Copy user bashrc
+- name: Copy skel bashrc
   copy:
     src: files/user_bashrc
     dest: /etc/skel/.bashrc
@@ -15,6 +15,13 @@
     group: root
     mode: '0644'
 
+- name: Copy vimrc
+  copy:
+    src: files/vimrc
+    dest: /etc/vim/vimrc
+    owner: root
+    group: root
+    mode: '0644'
 
 ## в директории каждого пользователя
 # - name: Copy .psqlrc to /etc/skel

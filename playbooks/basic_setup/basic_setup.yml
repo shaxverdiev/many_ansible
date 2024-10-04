@@ -1,0 +1,28 @@
+---
+- name: BASE SETTINGS
+  hosts: all
+  become: true
+  vars_prompt:
+    - name: response
+      prompt: "{{ user_name }}.pub is located in 'roles/create_admin_users/files/pub_keys/'? (y/n)"
+      private: false
+    - name: Запросить ввод пользователя
+      pause:
+        prompt: "Продолжить выполнение плейбука? (y/n)"
+      register: user_input
+
+  # tasks:
+  #   - name: Stop playbook if user does not want to continue
+  #     fail:
+  #       msg: "Playbook execution stopped by the user."
+  #     when: response = 'y'
+
+  #   - name: Continue with the playbook
+  #     debug:
+  #       msg: "Continuing with the playbook execution."
+
+  roles:
+    - install_base_packages
+    - copy_base_configs
+    - create_admin_users
+    - disable_password_access

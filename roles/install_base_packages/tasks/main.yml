@@ -1,4 +1,18 @@
 ---
+- name: Set timezone to Moscow
+  timezone:
+    name: Europe/Moscow
+
+- name: Verify current timezone
+  command: date
+  register: current_date
+  ignore_errors: yes
+
+- name: Show the current date and timezone
+  debug:
+    msg: "Current date and time: {{ current_date.stdout }}"
+
+
 - name: Update package cache
   apt:
     update_cache: yes
