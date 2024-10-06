@@ -6,4 +6,9 @@ base_packages:
   - wget
   - net-tools
   - util-linux
+  - htop
+  - btop
+  - iptables
+  - apt-transport-https
+  - ca-certificates
   # - docker.io

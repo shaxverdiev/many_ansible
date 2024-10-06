@@ -1,5 +1,5 @@
-.env
-.pub
+*.env
+*.pub
 /cache
 .retry
 .swp
