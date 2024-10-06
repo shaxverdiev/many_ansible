@@ -1,47 +1,6 @@
 ---
-- fail:
-    msg: user_name not defined
-  when: user_name is not defined
-
-
-- name: Create user {{ user_name }} DEB-based
-  user:
-    name: "{{ user_name }}"
-    shell: /bin/bash
-    groups:
-      - sudo
-    append: yes
-    state: present
-    update_password: always
-  register: user_pass_status_deb
-  when: ansible_distribution == "Astra Linux (Smolensk)" or ansible_distribution == "Debian" or ansible_distribution == "Ubuntu" or ansible_distribution == "Astra Linux" or ansible_os_family == "Debian"
-
-
-- name: Configure sudo to allow passwordless sudo for the user
-  lineinfile:
-    path: /etc/sudoers
-    regexp: '^{{ user_name }}\s+ALL=(ALL:ALL)\s+NOPASSWD:.*'
-    line: '{{ user_name }} ALL=(ALL:ALL) NOPASSWD: ALL'
-    state: present
-    validate: 'visudo -cf %s'
-
-
-- name: Copy .bashrc from /etc/skel to user's home directory
-  copy:
-    src: /etc/skel/.bashrc
-    dest: "/home/{{ user_name }}/.bashrc"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
-    mode: '0644'
-    force: yes
-    remote_src: yes
-  when: user_name is defined
-
-
-- name: Set authorized key
-  ansible.posix.authorized_key:
-    user: "{{ user_name }}"
-    key: "{{ lookup('file', 'files/pub_keys/{{ user_name }}.pub') }}"
-    state: present
-    exclusive: false
-
+- name: create user
+  vars:
+    user_name: "{{ item }}"
+  include_tasks: "create_admins.yml"
+  with_items: "{{ admins }}"

@@ -1,2 +1,1 @@
----
-# vars file for create_admin_users
+pub_key_path: '{{ role_path }}/files/pub_keys'

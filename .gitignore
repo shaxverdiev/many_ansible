@@ -1,0 +1,5 @@
+.env
+.pub
+/cache
+.retry
+.swp
