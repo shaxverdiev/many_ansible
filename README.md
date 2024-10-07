@@ -1,5 +1,2 @@
-#### что бы создать новую роль:
-`ansible-galaxy role init <role_name>`
-
-
-
+## Ansible-playbooks for setup dev environment
+### so far, only for .deb distr
