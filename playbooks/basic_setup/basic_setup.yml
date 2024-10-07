@@ -1,11 +1,15 @@
-#  ansible-playbook playbooks/basic_setup/basic_setup.yml -e "admins=['adminis','vadim']"
+###########################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  
+#  ПОСЛЕ ВЫПОЛНЕНИЯ ЭТОГО ПЛЕЙБУКА - ВХОД ПО ПАРОЛЮ НА НАСТРАИВАЕМЫЕ СЕРВЕРА БУДЕТ НЕ ДОСТУПЕН
+#
+#  ansible-playbook -i inventory/password.ini playbooks/basic_setup/basic_setup.yml -e "admins=['adminis','vadim']"
+###########################################################################################
 
 ---
 - name: BASE SETTINGS
   hosts: all
   become: true
-
-
 
   roles:
     - install_base_packages

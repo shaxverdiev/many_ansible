@@ -1,0 +1,13 @@
+###########################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/4_nginx_ingress.yml
+###########################################################################################
+
+
+---
+- name: Install Nginx Ingress Controller
+  hosts: all
+  become: true
+  
+  roles:
+    - nginx_ingress_install

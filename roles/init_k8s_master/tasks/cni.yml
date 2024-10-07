@@ -1,0 +1,20 @@
+---
+- name: Download Calico operator
+  command: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{ calico_version }}/manifests/tigera-operator.yaml
+
+
+- name: Download custom-resources.yaml manifest
+  get_url:
+    url: "https://raw.githubusercontent.com/projectcalico/calico/{{ calico_version }}/manifests/custom-resources.yaml"
+    dest: /tmp/custom-resources.yaml
+
+
+- name: Change CIDR in custom-resources.yaml
+  replace:
+    path: /tmp/custom-resources.yaml
+    regexp: 'cidr: .*'
+    replace: "cidr: {{ pod_network_cidr }}"
+
+
+- name: Apply custom-resources.yaml manifest
+  command: kubectl apply -f /tmp/custom-resources.yaml

@@ -1,0 +1,13 @@
+###########################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/3_init_k8s_worker.yml
+###########################################################################################
+
+
+---
+- name: Initial WORKERS node for Kubernetes
+  hosts: all
+  become: true
+  
+  roles:
+    - init_k8s_worker

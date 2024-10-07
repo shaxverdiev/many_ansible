@@ -6,7 +6,7 @@
 - name: Verify current timezone
   command: date
   register: current_date
-  ignore_errors: yes
+  # ignore_errors: yes
 
 - name: Show the current date and timezone
   debug:

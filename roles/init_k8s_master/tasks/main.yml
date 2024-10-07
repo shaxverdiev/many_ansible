@@ -1,0 +1,11 @@
+---
+- name: Init K8S cluster
+  ansible.builtin.include_tasks: init.yml
+  when: inventory_hostname == groups['k8s_masters'][0]
+  run_once: true
+
+
+- name: Install CNI
+  ansible.builtin.include_tasks: cni.yml
+  when: inventory_hostname == groups['k8s_masters'][0]
+  run_once: true

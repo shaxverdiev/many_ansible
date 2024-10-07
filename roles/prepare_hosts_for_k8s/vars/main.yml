@@ -1,2 +1,24 @@
----
-# vars file for prepare_hosts_for_k8s
+    # Версия cri-dockerd и соответствующие URL
+    cri_dockerd_version: "0.3.15.3-0"
+    cri_dockerd_release: "v0.3.15"
+    cri_dockerd_url: "https://github.com/Mirantis/cri-dockerd/releases/download/{{ cri_dockerd_release }}/cri-dockerd_{{ cri_dockerd_version }}.ubuntu-jammy_amd64.deb"
+                      # https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.15/cri-dockerd_0.3.15.3-0.ubuntu-jammy_amd64.deb
+    
+    # Версия Kubernetes
+    kubernetes_version: "1.30"
+    
+    # Пакеты Kubernetes для установки
+    kube_packages:
+      - kubelet
+      - kubeadm
+      - kubectl
+    
+    # URL для добавления GPG ключа Kubernetes
+    kubernetes_key_url: "https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key"
+    
+    # Строка для добавления репозитория Kubernetes
+    kubernetes_repo_line: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
+    
+    # Путь к директории для хранения ключей apt
+    keyring_path: "/etc/apt/keyrings"
+

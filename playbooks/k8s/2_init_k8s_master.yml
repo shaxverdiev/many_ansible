@@ -1,0 +1,13 @@
+###########################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/2_init_k8s_master.yml
+###########################################################################################
+
+
+---
+- name: Initial MASTER node for Kubernetes
+  hosts: all
+  become: true
+  
+  roles:
+    - init_k8s_master

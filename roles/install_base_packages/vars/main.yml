@@ -11,4 +11,16 @@ base_packages:
   - iptables
   - apt-transport-https
   - ca-certificates
+  - mc
+  - gpg
+  - iproute2
+  - git
+  - bash-completion
+  - nfs-common
+  - tar
+  - ntp
+  - jq
+  - ipvsadm
+  - socat
+  - lsof
   # - docker.io

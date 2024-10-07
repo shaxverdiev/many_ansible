@@ -1,2 +1,131 @@
 ---
-# tasks file for prepare_hosts_for_k8s
+# - name: Enable NTP server
+#   when: ansible_facts['os_family'] == "Debian"
+#   ansible.builtin.service:
+#     name: ntp
+#     state: started
+#     enabled: true
+
+
+- name: Test swap
+  ansible.builtin.shell: "swapon --show --noheadings | wc -l"
+  register: swap_ret
+
+
+- name: If swap is enabled - disable it
+  ansible.builtin.command: swapoff -a
+  when: swap_ret.stdout != "0"
+
+
+- name: Disable SWAP in fstab
+  when: swap_ret.stdout != "0"
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: '^([^#].*\s*swap\s*.*)$'
+    replace: '# \1'
+
+
+- name: Set Sysctl on all nodes
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - name: net.ipv4.ip_forward
+      value: 1
+    # - name: net.bridge.bridge-nf-call-iptables
+    #   value: 1
+    # - name: net.bridge.bridge-nf-call-ip6tables
+    #   value: 1
+    # - name: vm.max_map_count # for opensearch & elasticserarch
+    #   value: 262144
+
+
+
+
+- name: Update apt packages cache
+  apt:
+    update_cache: yes
+    # cache_valid_time: 3600
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+    # update_cache: no
+
+- name: Download cri-dockerd package
+  get_url:
+    url: "{{ cri_dockerd_url }}"
+    dest: "/tmp/cri-dockerd.deb"
+    mode: '0644'
+
+- name: Install cri-dockerd
+  apt:
+    deb: "/tmp/cri-dockerd.deb"
+    state: present
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Enable and start cri-docker service
+  systemd:
+    name: cri-docker
+    enabled: yes
+    state: started
+
+- name: Create directory for apt keys, if not exist
+  file:
+    path: "{{ keyring_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Download GPG key for Kubernetes
+  get_url:
+    url: "{{ kubernetes_key_url }}"
+    dest: "/tmp/kubernetes-release.key"
+    mode: '0644'
+
+- name: Convert GPG key in dearmor
+  command: >
+    gpg --dearmor -o {{ keyring_path }}/kubernetes-apt-keyring.gpg /tmp/kubernetes-release.key
+  args:
+    creates: "{{ keyring_path }}/kubernetes-apt-keyring.gpg"
+
+- name: Add Kubernetes repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    line: "{{ kubernetes_repo_line }}"
+    create: yes
+    state: present
+
+- name: Update apt packages cache, after added Kubernetes repos
+  apt:
+    update_cache: yes
+    # cache_valid_time: 3600
+
+- name: Install kube packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ kube_packages }}"
+
+
+- name: Froze version - kubelet, kubeadm и kubectl
+  command: apt-mark hold {{ kube_packages | join(' ') }}
+
+
+- name: Stop service kubelet
+  ansible.builtin.systemd_service:
+    name: kubelet
+    state: stopped
+
+
+
+
+
+
+

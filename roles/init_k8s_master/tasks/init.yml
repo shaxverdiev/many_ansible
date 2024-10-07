@@ -1,0 +1,29 @@
+---
+# - name: reset cluster
+#   command: kubeadm reset --cri-socket=unix:///var/run/cri-dockerd.sock --force
+
+- name: Init cluster
+  command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --cri-socket=unix:///var/run/cri-dockerd.sock -v5
+  register: kubeadm_init
+
+- name: Create directory for kubectl config
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: '0755'
+
+- name: Copy kubeconfig
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+    remote_src: true
+
+
+- name: Add KUBECONFIG env in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+    state: present
