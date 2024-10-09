@@ -1,0 +1,19 @@
+---
+- name: Ensure apt package list is updated
+  apt:
+    update_cache: yes
+
+- name: Install PostgreSQL and necessary dependencies
+  apt:
+    name:
+      - postgresql-{{ pg_version }}
+      - postgresql-contrib
+      - python3-psycopg2
+      - libpq-dev
+    state: present
+
+- name: Ensure PostgreSQL is running
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes

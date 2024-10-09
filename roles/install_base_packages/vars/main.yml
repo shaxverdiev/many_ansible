@@ -1,5 +1,6 @@
 ---
 base_packages:
+  - python3-pip
   - vim
   - tree
   - curl
@@ -11,7 +12,6 @@ base_packages:
   - iptables
   - apt-transport-https
   - ca-certificates
-  - mc
   - gpg
   - iproute2
   - git

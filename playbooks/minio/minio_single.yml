@@ -1,0 +1,8 @@
+---
+- name: Download and Install minio
+  hosts: all
+  become: true
+
+  roles:
+    - install_minio
+    - basic_setup_minio

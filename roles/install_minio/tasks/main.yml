@@ -1,0 +1,168 @@
+# ansible-playbook playbooks/minio/minio_single.yml -i ip,
+#
+# =========================================================== #
+#  Требуется дистриб сервера и бинарник клиента
+#
+#  Optional:
+#     host_ip=  minio_login=  minio_password=  minio_volumes=  minio_server_url=#http://minio.example.net
+#     minio_volumes - (default /minio/data) папка с блочником для хранилища
+# =========================================================== #
+---
+
+- name: Define variables
+  set_fact:
+    minio_volumes: "{{ parent_dir }}/minio"
+
+- name: Create package directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+  - "{{ remote_package_dir }}"
+
+
+- name: Download MinIO Server deb
+  ansible.builtin.get_url:
+    url: "{{ distrib_server }}"
+    dest: "{{ remote_package_dir }}"
+    mode: '0644'
+
+- name: Download MinIO Client deb
+  ansible.builtin.get_url:
+    url: "{{ distrib_client }}"
+    dest: "{{ remote_package_dir }}"
+    mode: '0644'
+
+
+- name: Install deb packages
+  apt:
+    deb: "{{ remote_package_dir }}/{{ item }}"
+  with_items:
+    - "{{ distrib_server | basename }}"
+    - "{{ distrib_client | basename }}"
+  register: result
+
+- debug:
+    var: result.stdout_lines
+
+- name: Create group "{{ minio_owner }}"
+  group:
+    name: "{{ minio_owner }}"
+    gid: 908
+    system: yes
+
+- name: Create user "{{ minio_owner }}"
+  user:
+    name: "{{ minio_owner }}"
+    uid: 908
+    group: "{{ minio_owner }}"
+    state: present
+    system: yes
+
+# - name: Remove old data directory
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   when: force|bool
+#   with_items:
+#   - "{{ minio_volumes }}"
+
+- name: Create data directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    group:  "{{ minio_owner }}"
+    owner:  "{{ minio_owner }}"
+  with_items:
+  - "{{ minio_volumes }}"
+
+- name : Upload SystemD Unit file
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+  with_items:
+    - "{{ systemd_file }}"
+  when: ansible_service_mgr == "systemd"
+  notify: restart service
+
+- name : Upload config
+  template:
+    src: "templates/{{ template_config }}"
+    dest: "{{ config_path }}"
+  notify: restart service
+
+- name : Set minio url by parameter
+  set_fact:
+    minio_server_url_fact: "{{ minio_server_url }}"
+  when: minio_server_url is not none
+
+- name : Set minio url by main IP
+  set_fact:
+    minio_server_url_fact: "http://{{ ansible_default_ipv4.address }}:{{ minio_port }}"
+  when: minio_server_url is none
+
+- name : Customize config
+  lineinfile:
+    path: "{{ config_path }}"
+    regexp: "^#MINIO_SERVER_URL"
+    line: 'MINIO_SERVER_URL="{{ minio_server_url_fact }}"'
+  notify: restart service
+
+- name: Enable and start service
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+  with_items:
+    - "{{ systemd_file }}"
+  when: ansible_service_mgr == "systemd"
+
+
+- name: Restart Minio
+  systemd:
+    name: minio
+    state: started
+    enabled: yes
+
+
+- name: Create alias for Minio
+  # command: "mcli alias set mymin http://{{ ansible_default_ipv4.address }}:{{ minio_port }} {{ minio_login }} {{ minio_password }}"
+  command: "/usr/local/bin/mcli alias set local http://192.168.122.60:9000 access-777 secret-777"
+  register: out_init_alias
+  ignore_errors: true
+
+- debug:
+    var: out_init_alias
+
+
+- name: Create bucket
+  command: "/usr/local/bin/mcli mb local/{{ bucket_name }}"
+  register: create_bucket
+  ignore_errors: true
+  when:
+    - bucket_name is defined
+    - bucket_name|length > 1
+
+- debug:
+    var: create_bucket
+
+
+
+- name: Output with creds
+  debug:
+    msg: "{{ item }}"
+  with_items:
+      - "Пользователь для настройки приложений{{':'}}"
+      - "          port{{':'}} {{ minio_port }}"
+      - "        bucket{{':'}} {{ bucket_name }}"
+      - "    Access key{{':'}} {{ minio_login }}"
+      - "    Secret key{{':'}} {{ minio_password }}"
+
+- name: Restart Minio
+  systemd:
+    name: minio
+    state: started
+    enabled: yes

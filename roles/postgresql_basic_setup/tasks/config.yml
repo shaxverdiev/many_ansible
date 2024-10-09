@@ -1,0 +1,25 @@
+---
+- name: Copy postgresql.conf
+  copy:
+    src: configs/custom_postgresql.conf
+    dest: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: '0644'
+  # become: yes
+
+
+- name: Copy pg_hba.conf
+  copy:
+    src: configs/custom_pg_hba.conf
+    dest: /etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: '0644'
+  # become: yes
+
+
+- name: Restart postgresql.service
+  systemd_service:
+    name: postgresql
+    state: restarted

@@ -1,0 +1,18 @@
+###########################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  
+#  ansible-playbook -i inventory/password.ini playbooks/postgresql/install_postgresql_single.yml -e "pg_version=16"
+###########################################################################################
+
+
+---
+- name: Download and Install Postgresql
+  hosts: all
+  become: true
+
+  roles:
+    - install_postgresql
+    - postgresql_basic_setup
+
+
+ 

@@ -1,0 +1,6 @@
+---
+- name: Configure Postgresql cluster
+  include_tasks: config.yml
+
+- name: Create database and user
+  include_tasks: user.yml

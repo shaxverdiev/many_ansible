@@ -1,0 +1,23 @@
+    distrib_server: "https://dl.min.io/server/minio/release/linux-amd64/minio_20241002175041.0.0_amd64.deb"
+    distrib_client: "https://dl.min.io/client/mc/release/linux-amd64/mcli_20241002082728.0.0_amd64.deb"
+    parent_dir: "/disk"
+    minio_login: "access-777"
+    minio_password: "secret-777"
+    bucket_name: "xxx-bucket777"
+
+    host_ip: all
+    remote_package_dir: "/d01/packages"
+    #distrib_server: # path to deb package
+    #distrib_client: # path to binary
+    systemd_file: "minio.service"
+    template_config: minio_env.j2
+    config_path: /etc/default/minio
+    #minio_login: admin
+    #minio_password: adminpass
+    #minio_volumes: /disk/minio
+    minio_server_url: http://0.0.0.0:9000
+    minio_owner: minio
+    minio_port: 9000
+    minio_console_port: 9001
+    force: false
+
