@@ -4,27 +4,31 @@
 #
 ##########################################################################################################################
 
-
 ---
-- hosts: "{{ hosts }}"
+- name: download and install JENKINS AGENT
+  hosts: "{{ hosts }}"
   become: yes
   vars_prompt:
-    - name: selected_role
-      prompt: "Install Jenkins AGENT (1 - server, 2 - docker)"
-      private: no
+    - name: method
+      prompt: "choose install method: \n1 - in server\n2 - in docker\n"
+      private: no 
 
   tasks:
-    - name: Проверка выбора роли
+    - name: Check role
       fail:
-        msg: "Error: You should chose only one method (1, 2)."
-      when: selected_role not in ['1', '2']
+        msg: "ERROR: You should chose only one method (1, 2)."
+      when: method not in ['1', '2']
 
-    - name: Server
-      include_role:
-        name: install_jenkins_agent
-      when: selected_role == '1'
+    # - name: server
+      # when: method == '1'
+      # block:
+        # - name: one
+          # include_role:
+            # name: install_jenkins_agent
 
-    - name: Docker
-      include_role:
-        name: install_jenkins_agent_docker
-      when: selected_role == '2'
+    - name: docker
+      when: method == '2'
+      block:
+        - name: one
+          include_role:
+            name: install_jenkins_agent_docker

@@ -4,4 +4,5 @@ path_to_tar: "{{ role_path}}/files/images/{{ ja_image_name }}.tar"
 dest_path_tar: "/opt/{{ ja_image_name }}.tar"
 js_ssh_pub_key: "xxx"
 ja_ssh_public_port: 10222
-ja_volume_dir: /opt/jenkins_agent
+ja_volume_dir: /opt/jenkins_agent_volume
+cont_name: jenkins-ssh-dind-agent

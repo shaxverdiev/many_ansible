@@ -28,12 +28,12 @@
 
     - name: Copy Jenkins initial script
       template:
-        src: templates/jenkins_initial_script.j2  # Update with the path to your script
+        src: templates/jenkins_server_initial_script.j2  # Update with the path to your script
         dest: /opt/jenkins_initial_script.sh
         mode: '0755'
 # 
     - name: Execute Jenkins initial script (Docker Run)
-      command: bash /opt/jenkins_initial_script.sh
+      command: bash /opt/jenkins_server_initial_script.sh
       ignore_errors: true
 # 
     - name: Pause until the Jenkins server is initialized

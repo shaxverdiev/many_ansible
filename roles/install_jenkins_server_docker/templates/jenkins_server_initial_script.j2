@@ -1,0 +1,6 @@
+docker run -d \
+--name {{ cont_name }} \
+-p {{ jenkins_publish_port }}:8080 \
+-v {{ jenkins_volume_dir }}:/var/jenkins_home \
+--restart always \
+{{ jenkins_server_image }}

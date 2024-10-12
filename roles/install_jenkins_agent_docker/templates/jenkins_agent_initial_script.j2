@@ -3,5 +3,6 @@ docker run \
 -p {{ ja_ssh_public_port }}:22 \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -e "JENKINS_AGENT_SSH_PUBKEY={{ js_ssh_pub_key }}" \
---name jenkins-ssh-dind-agent \
+--name {{ cont_name }} \
+--restart always \
 {{ ja_image_name }} 

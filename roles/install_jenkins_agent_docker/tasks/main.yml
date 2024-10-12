@@ -4,6 +4,7 @@
       register: docker_version
       ignore_errors: true  # Ignore errors if Docker is not installed
 
+
     - name: Install Docker if not present
       apt:
         name: docker.io  # Use 'docker-ce' for Docker Community Edition
@@ -16,7 +17,7 @@
       service:
         name: docker
         state: started
-
+  
 
     - name: Check jenkins-agent-dind.tar
       stat:
@@ -24,6 +25,7 @@
       delegate_to: localhost
       become: false
       register: ja_tar
+      ignore_errors: true
 
 
     - block:
@@ -34,11 +36,11 @@
 
         - name: Load image
           community.docker.docker_image_load:
-            path: "{{ dest_path_tar}}"
+            path: "{{ dest_path_tar }}"
           register: docker_image_loaded
           ignore_errors: true
       when: ja_tar.stat.exists
-      name: Обработка tar-файла
+      name: Processing .tar
 
     - block:
         - name: Copy Dockerfile for {{ ja_image_name }}
@@ -54,7 +56,7 @@
               path: /opt/
             source: build
       when: not ja_tar.stat.exists
-      name: Сборка Docker-образа из Dockerfile
+      name: Build Dockerfile
 
 
 

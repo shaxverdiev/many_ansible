@@ -5,7 +5,7 @@
 #################################################################################################
 
 ---
-- name: download and install JENKINS SERVER
+- name: download and install GITLAB
   hosts: "{{ hosts }}"
   become: yes
   vars_prompt:
@@ -24,11 +24,41 @@
       # block:
         # - name: one
           # include_role:
-            # name: install_jenkins_server
+            # name: install_gitlab
 
-    - name: docker
-      when: method == '2'
-      block:
-        - name: one
-          include_role:
-            name: install_jenkins_server_docker
+    # - name: docker
+      # when: method == '2'
+      # block:
+        # - name: one
+          # include_role:
+            # name: install_gitlab_docker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

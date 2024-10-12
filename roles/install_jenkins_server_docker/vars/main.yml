@@ -1,5 +1,6 @@
 ---
 jenkins_publish_port: 10888
 jenkins_server_image: jenkins/jenkins:latest
-jenkins_volume_dir: /opt/jenkins_data
+jenkins_volume_dir: /opt/jenkins_server_volume
 js_ssh_keys_dir: "{{ jenkins_volume_dir}}/.ssh"
+cont_name: jenkins_server
