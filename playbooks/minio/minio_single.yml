@@ -1,3 +1,9 @@
+###############################################################################################
+#  ПРИМЕР ЗАПУСКА
+#  
+#  ansible-playbook -i inventory/password.ini playbooks/minio/minio_single.yml -e "hosts=all"
+###############################################################################################
+
 ---
 - name: Download and Install minio
   hosts: all

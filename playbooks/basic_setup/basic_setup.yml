@@ -3,7 +3,7 @@
 #  
 #  ПОСЛЕ ВЫПОЛНЕНИЯ ЭТОГО ПЛЕЙБУКА - ВХОД ПО ПАРОЛЮ НА НАСТРАИВАЕМЫЕ СЕРВЕРА БУДЕТ НЕ ДОСТУПЕН
 #
-#  ansible-playbook -i inventory/password.ini playbooks/basic_setup/basic_setup.yml -e "admins=['adminis','vadim']"
+#  ansible-playbook -i inventory/password.ini playbooks/basic_setup/basic_setup.yml -e "hosts=all docker=false admins=['adminis','vadim']"
 ###########################################################################################
 
 ---

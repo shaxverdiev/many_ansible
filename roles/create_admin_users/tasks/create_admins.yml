@@ -44,6 +44,18 @@
     validate: 'visudo -cf %s'
 
 
+
+
+- name: Debug docker variable
+  ansible.builtin.debug:
+    msg: "The value of docker is {{ docker }}"
+
+
+- name: Install Docker
+  include_tasks: install_docker.yml
+  when: docker | bool
+
+
 - name: Copy .bashrc from /etc/skel to user's home directory
   copy:
     src: /etc/skel/.bashrc
@@ -62,4 +74,3 @@
     key: "{{ lookup('file', 'files/pub_keys/{{ user_name }}.pub') }}"
     state: present
     exclusive: false
-

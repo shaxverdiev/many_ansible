@@ -1,0 +1,30 @@
+########################################################################################################################## 
+#
+# ansible-playbook -i inventory/ssh.ini playbooks/jenkins/jenkins_agent.yml -e "hosts=all -e js_ssh_pub_key='pub_key'"
+#
+##########################################################################################################################
+
+
+---
+- hosts: "{{ hosts }}"
+  become: yes
+  vars_prompt:
+    - name: selected_role
+      prompt: "Install Jenkins AGENT (1 - server, 2 - docker)"
+      private: no
+
+  tasks:
+    - name: Проверка выбора роли
+      fail:
+        msg: "Error: You should chose only one method (1, 2)."
+      when: selected_role not in ['1', '2']
+
+    - name: Server
+      include_role:
+        name: install_jenkins_agent
+      when: selected_role == '1'
+
+    - name: Docker
+      include_role:
+        name: install_jenkins_agent_docker
+      when: selected_role == '2'

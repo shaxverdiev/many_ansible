@@ -1,0 +1,87 @@
+---
+    - name: Check Docker installation
+      command: docker --version
+      register: docker_version
+      ignore_errors: true  # Ignore errors if Docker is not installed
+
+    - name: Install Docker if not present
+      apt:
+        name: docker.io  # Use 'docker-ce' for Docker Community Edition
+        state: present
+        update_cache: true
+      when: docker_version is failed  # Only install if Docker is not installed
+
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+
+
+    - name: Check jenkins-agent-dind.tar
+      stat:
+        path: "{{ path_to_tar }}"
+      delegate_to: localhost
+      become: false
+      register: ja_tar
+
+
+    - block:
+        - name: Copy {{ ja_image_name }} tar
+          copy:
+            src: "{{ path_to_tar }}"
+            dest: "{{ dest_path_tar }}"
+
+        - name: Load image
+          community.docker.docker_image_load:
+            path: "{{ dest_path_tar}}"
+          register: docker_image_loaded
+          ignore_errors: true
+      when: ja_tar.stat.exists
+      name: Обработка tar-файла
+
+    - block:
+        - name: Copy Dockerfile for {{ ja_image_name }}
+          copy:
+            src: Dockerfile
+            dest: /opt/Dockerfile
+
+        - name: Build image from Dockerfile
+          community.docker.docker_image:
+            name: "{{ ja_image_name }}"
+            tag: "latest"
+            build:
+              path: /opt/
+            source: build
+      when: not ja_tar.stat.exists
+      name: Сборка Docker-образа из Dockerfile
+
+
+
+    - name: Create directory for Jenkins Agent Volume
+      file:
+        path: "{{ ja_volume_dir }}"
+        owner: 1000
+        group: 1000
+        state: directory
+
+
+    - name: Copy Jenkins Agent initial script
+      template:
+        src: templates/jenkins_agent_initial_script.j2  # Update with the path to your script
+        dest: /opt/jenkins_agent_initial_script.sh
+        mode: '0755'
+
+
+    - name: Execute Jenkins Agent initial script (Docker Run)
+      command: bash /opt/jenkins_agent_initial_script.sh
+      ignore_errors: true
+
+
+    - name: Pause until the Jenkins Agent is initialized
+      pause:
+        seconds: 15
+
+
+    
+ 

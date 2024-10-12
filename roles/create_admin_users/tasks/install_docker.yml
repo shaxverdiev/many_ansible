@@ -1,0 +1,23 @@
+---
+- name: Install docker.io if docker variable is true
+  apt:
+    name: docker.io
+    state: present
+  when: docker|bool
+  become: true
+
+- name: Ensure Docker service is running and enabled
+  service:
+    name: docker
+    state: started
+    enabled: true
+  when: docker|bool
+  become: true
+
+- name: Add user to docker group
+  user:
+    name: "{{ user_name }}"
+    groups: docker
+    append: true
+  when: docker|bool
+  become: true
