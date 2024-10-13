@@ -1,80 +1,81 @@
 ---
-    - name: Check Docker installation
-      command: docker --version
-      register: docker_version
-      ignore_errors: true  # Ignore errors if Docker is not installed
-
-    - name: Install Docker if not present
-      apt:
-        name: docker.io  # Use 'docker-ce' for Docker Community Edition
-        state: present
-        update_cache: true
-      when: docker_version is failed  # Only install if Docker is not installed
+- name: Check Docker installation
+  command: docker --version
+  register: docker_version
+  ignore_errors: true
 
 
-    - name: Ensure Docker is running
-      service:
-        name: docker
-        state: started
+- name: Install Docker if not present
+  apt:
+    name: docker.io
+    state: present
+    update_cache: true
+  when: docker_version is failed
 
 
-    - name: Create directory for Jenkin Server Volume
-      file:
-        path: "{{ jenkins_volume_dir }}"
-        owner: 1000
-        group: 1000
-        state: directory
+- name: Ensure Docker is running
+  service:
+    name: docker
+    state: started
 
 
-    - name: Copy Jenkins initial script
-      template:
-        src: templates/jenkins_server_initial_script.j2  # Update with the path to your script
-        dest: /opt/jenkins_initial_script.sh
-        mode: '0755'
+- name: Create directory for Jenkin Server Volume
+  file:
+    path: "{{ jenkins_volume_dir }}"
+    owner: 1000
+    group: 1000
+    state: directory
+
+
+- name: Copy Jenkins initial script
+  template:
+    src: templates/jenkins_server_initial_script.j2  # Update with the path to your script
+    dest: /opt/jenkins_initial_script.sh
+    mode: '0755'
 # 
-    - name: Execute Jenkins initial script (Docker Run)
-      command: bash /opt/jenkins_server_initial_script.sh
-      ignore_errors: true
+- name: Execute Jenkins initial script (Docker Run)
+  command: bash /opt/jenkins_server_initial_script.sh
+  ignore_errors: true
 # 
-    - name: Pause until the Jenkins server is initialized
-      pause:
-        seconds: 30
+- name: Pause until the Jenkins server is initialized
+  pause:
+    seconds: 30
 
 
-    - name: Create directory for .ssh
-      file:
-        path: "{{ js_ssh_keys_dir }}"
-        owner: 1000
-        group: 1000
-        state: directory
+- name: Create directory for .ssh
+  file:
+    path: "{{ js_ssh_keys_dir }}"
+    owner: 1000
+    group: 1000
+    state: directory
 
 
-    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
-      community.crypto.openssh_keypair:
-        path: "{{ js_ssh_keys_dir }}/js_id_rsa"
-        owner: 1000
-        group: 1000
+- name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+  community.crypto.openssh_keypair:
+    path: "{{ js_ssh_keys_dir }}/js_id_rsa"
+    owner: 1000
+    group: 1000
 
 
-    - name: Get .pub key for Jenkins Agent
-      command: "cat {{ js_ssh_keys_dir }}/js_id_rsa.pub"
-      register: pub_key
+- name: Get .pub key for Jenkins Agent
+  command: "cat {{ js_ssh_keys_dir }}/js_id_rsa.pub"
+  register: pub_key
 
 
-    - name: Get Jenkins Server Password
-      shell: docker exec jenkins_server cat /var/jenkins_home/secrets/initialAdminPassword
-      register: token
-      ignore_errors: true
+- name: Get Jenkins Server Password
+  shell: docker exec jenkins_server cat /var/jenkins_home/secrets/initialAdminPassword
+  register: token
+  ignore_errors: true
 
 
-    - name: Creds
-      debug:
-        msg:
-          - ""
-          - "JENKINS ADDRESS            : {{ ansible_default_ipv4.address }}:{{ jenkins_publish_port}}"
-          - ""
-          - "JENKINS SERVER PASSWORD    : {{ token.stdout }}"
-          - ""
-          - ".pub key for Jenkins Agent : {{ pub_key.stdout }}"
-    
- 
+- name: Creds
+  debug:
+    msg:
+      - ""
+      - "JENKINS ADDRESS            : {{ ansible_default_ipv4.address }}:{{ jenkins_publish_port}}"
+      - ""
+      - "JENKINS SERVER PASSWORD    : {{ token.stdout }}"
+      - ""
+      - ".pub key for Jenkins Agent : {{ pub_key.stdout }}"
+
+

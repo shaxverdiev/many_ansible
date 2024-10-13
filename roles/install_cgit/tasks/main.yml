@@ -1,0 +1,44 @@
+---
+- name: check git installation
+  command: git --version
+  register: git_version
+  ignore_errors: true
+
+
+- name: Install Git if not present
+  apt:
+    name: git
+    state: present
+    update_cache: true
+  when: git_version is failed 
+
+
+- name: Ensure directory for git bare repo exists
+  file:
+    path: "{{ git_bare_repo_path }}"
+    group: "{{ git_bare_repo_group }}"
+    owner: "{{ git_bare_repo_owner }}"
+    state: directory
+    # mode: '765'
+
+
+- name: Initialize a bare git repository
+  shell: "cd {{ git_bare_repo_path }} && git init --bare"
+  become: true
+  become_user: adminis
+
+
+- name: creds
+  debug:
+    msg:
+      - ""
+      - "COMMAND FOR CLONE REPO:  git clone adminis@{{ ansible_default_ipv4.address }}:{{ git_bare_repo_path}}"
+
+
+# https://gist.github.com/cacharle/e4e6d93710c45ee6a33a1f31d1b91b4c
+# https://wiki.archlinux.org/title/Cgit
+# https://git.zx2c4.com/cgit/tree/README 
+
+# создать конфиг в /etc/nginx/conf.d/cgit.conf  
+# systemctl restart nginx
+# systemctl restart fcgiwrap

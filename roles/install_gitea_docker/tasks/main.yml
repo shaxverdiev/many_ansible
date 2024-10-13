@@ -1,0 +1,69 @@
+---
+- name: Check Docker installation
+  command: docker --version && docker-compose --version
+  register: docker_version
+  ignore_errors: true
+
+
+# - name: Install Docker if not present
+#   apt:
+#     name: docker.io
+#     state: present
+#     update_cache: true
+#   when: docker_version is failed
+
+
+- name: Ensure Docker is running
+  service:
+    name: docker
+    state: started
+
+
+- name: Create directory for Gitea Volume
+  file:
+    path: "{{ gitea_volume }}"
+    owner: 1000
+    group: 1000
+    state: directory
+
+
+- name: SQLITE
+  block:
+    - name: Copy Gitea docker-compose (SQLITE)
+      template:
+        src: templates/{{ sqlite_dc }}.j2
+        dest: /opt/{{ sqlite_dc }}.yml
+        mode: '0755'
+
+    - name: Build app (gitea_sqlite)
+      command: docker-compose -f /opt/{{ sqlite_dc }}.yml up -d
+      # ignore_errors: true
+  when: db == "sqlite"
+  
+
+- name: PG
+  block:
+    - name: Copy Gitea docker-compose (POSTGRES)
+      template:
+        src: templates/{{ pg_dc }}.j2
+        dest: /opt/{{ pg_dc }}.yml
+        mode: '0755'
+
+    - name: Build app (gitea_pg)
+      command: docker-compose -f /opt/{{ pg_dc }}.yml up -d
+      # ignore_errors: true
+  when: db == "postgresql"
+
+
+- name: Pause until the Jenkins server is initialized
+  pause:
+    seconds: 30
+
+
+
+- name: Creds
+  debug:
+    msg:
+      - ""
+      - "Gitea address : {{ ansible_default_ipv4.address }}:{{ external_app_port }}"
+

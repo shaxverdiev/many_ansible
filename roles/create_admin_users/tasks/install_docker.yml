@@ -1,7 +1,9 @@
 ---
 - name: Install docker.io if docker variable is true
   apt:
-    name: docker.io
+    pkg:
+    - docker.io
+    - docker-compose
     state: present
   when: docker|bool
   become: true

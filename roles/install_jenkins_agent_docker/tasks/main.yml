@@ -2,15 +2,15 @@
     - name: Check Docker installation
       command: docker --version
       register: docker_version
-      ignore_errors: true  # Ignore errors if Docker is not installed
+      ignore_errors: true
 
 
     - name: Install Docker if not present
       apt:
-        name: docker.io  # Use 'docker-ce' for Docker Community Edition
+        name: docker.io
         state: present
         update_cache: true
-      when: docker_version is failed  # Only install if Docker is not installed
+      when: docker_version is failed
 
 
     - name: Ensure Docker is running

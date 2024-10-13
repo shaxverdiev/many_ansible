@@ -1,0 +1,36 @@
+#################################################################################################
+#
+#  ansible-playbook -i inventory/ssh.ini playbooks/git_repo/cgit.yml -e "hosts= project_name="
+#
+#################################################################################################
+
+---
+- name: install CGIT
+  hosts: "{{ hosts }}"
+  become: yes
+  vars_prompt:
+    - name: method
+      prompt: "choose install method: \n1 - in server\n2 - in docker\n"
+      private: no 
+
+  tasks:
+    - name: check role
+      fail:
+        msg: "ERROR: You should chose only one method (1, 2)."
+      when: method not in ['1', '2']
+
+    # - name: server
+    #   when: method == '1'
+    #   block:
+    #     - name: one
+    #       include_role:
+    #         name: install_cgit
+
+    # - name: docker
+      # when: method == '2'
+      # block:
+        # - name: one
+          # include_role:
+            # name: install_cgit_docker
+
+
