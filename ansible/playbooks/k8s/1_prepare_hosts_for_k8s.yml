@@ -1,0 +1,17 @@
+###########################################################################################
+#
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/1_prepare_hosts_for_k8s.yml -e "hosts=k8s_masters,k8s_workers"
+#
+###########################################################################################
+
+
+---
+- name: Prepare hosts for k8s cluster
+  hosts: "{{ hosts }}"
+  become: true
+
+
+  roles:
+    - kubernetes/prepare_hosts_for_k8s
+    
+    

@@ -1,0 +1,14 @@
+###########################################################################################
+#
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/2_init_k8s_master.yml -e "hosts=k8s_masters"
+#
+###########################################################################################
+
+
+---
+- name: Initial MASTER node for Kubernetes
+  hosts: "{{ hosts }}"
+  become: true
+  
+  roles:
+    - kubernetes/init_k8s_master

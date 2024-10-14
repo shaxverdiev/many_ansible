@@ -1,0 +1,34 @@
+###############################################################################################
+#  
+#  ansible-playbook -i inventory/password.ini playbooks/metrics/all/alertmanager.yml -e "hosts=all"
+#
+###############################################################################################
+
+---
+- name: download and install ALERTMANAGER
+  hosts: "{{ hosts }}"
+  become: yes
+  vars_prompt:
+    - name: method
+      prompt: "Choose install method: \n1 - in server\n2 - in docker\n"
+      private: no 
+
+  tasks:
+    - name: check role 
+      fail: 
+        msg: "ERROR: You should chose only one method (1, 2)."
+      when: method not in ['1', '2']
+
+    # - name: server
+    #   when: method == '1'
+    #   block:
+    #     - name: one
+    #       include_role:
+    #         name: install_alertmanager
+
+    - name: docker
+      when: method == '2'
+      block:
+        - name: one
+          include_role:
+            name: install_alertmanager_docker

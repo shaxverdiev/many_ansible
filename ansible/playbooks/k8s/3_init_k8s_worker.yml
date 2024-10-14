@@ -1,0 +1,14 @@
+###########################################################################################
+#
+#  ansible-playbook -i inventory/ssh.ini playbooks/k8s/3_init_k8s_worker.yml -e "hosts=k8s_masters,k8s_workers"
+#
+###########################################################################################
+
+
+---
+- name: Initial WORKERS node for Kubernetes
+  hosts: "{{ hosts }}"
+  become: true
+  
+  roles:
+    - kubernetes/init_k8s_worker
