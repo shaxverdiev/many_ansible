@@ -1,0 +1,57 @@
+########################################################################################################################
+# 
+#  ДЛЯ DOCKER И LINUX 
+#  ansible-playbook -i inventory/password.ini playbooks/loki/loki.yml -e "hosts=build-monitor become=true"
+#
+#
+#  ДЛЯ K8S И HELM
+#  ansible-playbook playbooks/loki/loki.yml -e "hosts=localhost become=false"
+#
+########################################################################################################################
+
+---
+- name: download and install LOKI
+  hosts: "{{ hosts }}"
+  become: "{{ become }}"
+  vars: 
+    - app_name: loki
+    
+
+  vars_prompt:
+    - name: method
+      prompt: "Choose install method: \n1 - linux\n2 - docker\n3 - k8s\n4 - helm\n"
+      private: no 
+
+  tasks:
+    - name: check role 
+      fail: 
+        msg: "ERROR: You should chose only one method (1, 2, 3, 4)."
+      when: method not in ['1', '2', '3', '4']
+
+    # - name: server
+    #   when: method == '1'
+    #   block:
+    #     - name: one
+    #       include_role:
+    #         name: install/linux/install_loki
+
+    - name: docker
+      when: method == '2'
+      block:
+        - name: one
+          include_role:
+            name: install/docker/install_loki_docker
+
+    # - name: k8s
+    #   when: method == '3'
+    #   block:
+    #     - name: one
+    #       include_role:
+    #         name: install/k8s/install_loki_k8s
+
+    # - name: helm
+    #   when: method == '4'
+    #   block:
+    #     - name: one
+    #       include_role:
+    #         name: install/helm/install_loki_helm

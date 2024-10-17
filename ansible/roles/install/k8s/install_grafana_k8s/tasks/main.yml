@@ -1,0 +1,20 @@
+- name: Create {{ namespace }} namespace
+  kubernetes.core.k8s:
+    name: "{{ namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+
+- name: Create deployment {{ manifest }} from template
+  ansible.builtin.template:
+    src: templates/manifests/{{ manifest }}.j2
+    dest: /tmp/{{ manifest }}
+    
+
+- name: Create a Deployment by reading the definition from a local file
+  kubernetes.core.k8s:
+    namespace: "{{ namespace }}"
+    state: present
+    src: /tmp/{{ manifest }}
+

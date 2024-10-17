@@ -5,14 +5,6 @@
   ignore_errors: true
 
 
-# - name: Install Docker if not present
-#   apt:
-#     name: docker.io
-#     state: present
-#     update_cache: true
-#   when: docker_version is failed
-
-
 - name: Ensure Docker is running
   service:
     name: docker
@@ -55,7 +47,7 @@
   when: db == "postgresql"
 
 
-- name: Pause until the Jenkins server is initialized
+- name: Pause until the Gitea is initialized
   pause:
     seconds: 30
 

@@ -1,0 +1,12 @@
+services:
+  grafana:
+    image: {{ grafana_image }}
+    container_name: {{ grafana_cont_name }}
+    restart: unless-stopped
+    environment:
+     #- GF_SERVER_ROOT_URL=http://my.grafana.server/
+     - GF_INSTALL_PLUGINS=grafana-clock-panel
+    ports:
+     - '{{ grafana_ext_app_port}}:3000'
+    volumes:
+     - '{{ grafana_volume }}:/var/lib/grafana'

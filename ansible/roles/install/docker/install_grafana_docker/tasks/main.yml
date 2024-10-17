@@ -1,2 +1,58 @@
 ---
-# tasks file for install_grafana_docker
+- name: Check Docker installation
+  command: docker --version && docker-compose --version
+  register: docker_version
+  ignore_errors: true
+
+
+- name: Ensure Docker is running
+  service:
+    name: docker
+    state: started
+
+
+- name: Create grafana group
+  ansible.builtin.group:
+    name: grafana
+    gid: 472
+    state: present  
+
+
+- name: create grafana user
+  ansible.builtin.user:
+    name: grafana
+    uid: 472
+    group: grafana
+
+
+- name: Create directory for Grafana Volume
+  file:
+    path: "{{ grafana_volume }}"
+    owner: 472
+    group: 472
+    state: directory
+
+
+- name: Copy Grafana docker-compose
+  template:
+    src: templates/docker/{{ grafana_dc }}.j2
+    dest: "{{ grafana_root_dir }}/{{ grafana_dc }}.yml"
+    mode: '0755'
+
+
+- name: Build app
+  command: docker-compose -f {{ grafana_root_dir }}/{{ grafana_dc }}.yml up -d
+  # ignore_errors: true
+
+
+- name: Pause until the {{ app_name }} is initialized
+  pause:
+    seconds: 30
+
+
+- name: Creds
+  debug:
+    msg:
+      - ""
+      - "Grafana address : http://{{ ansible_default_ipv4.address }}:{{ grafana_ext_app_port }}"
+

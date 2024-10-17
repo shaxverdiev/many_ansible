@@ -29,13 +29,13 @@
           include_role:             
             name: postgresql_basic_setup
 
-    # - name: docker
-      # when: method == '2'
-      # block:
-        # - name: one
-          # include_role:
-            # name: install_minio_docker
-        # - name: two
-          # include_role:
-            # name: basic_setup_minio_docker
+    - name: docker
+      when: method == '2'
+      block:
+        - name: one
+          include_role:
+            name: install_minio_docker
+        - name: two
+          include_role:
+            name: basic_setup_minio_docker
  

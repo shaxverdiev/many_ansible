@@ -1,0 +1,7 @@
+deployment_name: my-app
+replicas: 3
+app_label: my-app
+container_name: my-app-container
+image: nginx:latest
+container_port: 80
+namespace: nginx

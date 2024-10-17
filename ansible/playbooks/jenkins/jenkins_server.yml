@@ -24,11 +24,11 @@
       # block:
         # - name: one
           # include_role:
-            # name: install_jenkins_server
+            # name: install/linux/install_jenkins_server
 
     - name: docker
       when: method == '2'
       block:
         - name: one
           include_role:
-            name: install_jenkins_server_docker
+            name: install/docker/install_jenkins_server_docker
