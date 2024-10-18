@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  minio:
+    image: {{ image }}
+    container_name: {{ cont_name }}
+    ports:
+      - "{{ external_ui_port }}:9000"
+      - "{{ external_cli_port }}:9001"
+    volumes:
+      - {{ volume }}:/data
+    environment:
+      MINIO_ROOT_USER: {{ minio_root_user }}
+      MINIO_ROOT_PASSWORD: {{ minio_root_pass }}
+    command: server --console-address ":9001" /data

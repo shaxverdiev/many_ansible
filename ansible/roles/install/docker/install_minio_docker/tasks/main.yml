@@ -1,2 +1,48 @@
 ---
-# tasks file for install_minio_docker
+- name: Check Docker installation
+  command: docker --version && docker-compose --version
+  register: docker_version
+  # ignore_errors: true
+
+
+
+- name: Check Docker Compose installation
+  command: docker-compose --version
+  register: docker_compose_version
+  # ignore_errors: true
+
+
+
+- name: Create directory for {{ app_name }} volume
+  file:
+    path: "{{ volume }}"
+    # owner: 1000
+    # group: 1000
+    state: directory
+
+
+
+- name: Copy {{ app_name }} docker-compose
+  template:
+    src: "templates/docker/{{ dc }}.j2"
+    dest: "{{ minio_dir }}/{{ dc }}.yml"
+    mode: '0755'
+
+
+- name: Build app
+  command: "docker-compose -f {{ minio_dir }}/{{ dc }}.yml up -d"
+  # ignore_errors: true
+
+
+- name: Pause until the {{ app_name }} is initialized
+  pause:
+    seconds: 15
+
+
+
+- name: Creds
+  debug:
+    msg:
+      - ""
+      - "{{ app_name }} address : http://{{ ansible_default_ipv4.address }}:{{ external_ui_port }}"
+

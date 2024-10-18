@@ -1,2 +1,15 @@
----
-# vars file for install_minio_docker
+image: "minio/minio"
+cont_name: "minio"
+
+minio_dir: /opt/minio
+volume: "{{ minio_dir }}/minio_volume"
+
+external_ui_port: 9000
+external_cli_port: 9001
+
+dc: minio
+
+minio_root_user: "minio111"
+minio_root_pass: "minio111"
+
+

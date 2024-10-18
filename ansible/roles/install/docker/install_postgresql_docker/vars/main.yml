@@ -1,2 +1,15 @@
----
-# vars file for install_postgresql_docker
+image: "postgres"
+cont_name: "{{ app_name }}"
+
+app_dir: /opt/postgres
+volume: "{{ app_dir }}/{{ app_name }}_volume"
+
+external_port: 5432
+
+dc: postgres
+
+user: "test_user"
+pass: "secret_pass"
+db:   "test_db"
+
+
