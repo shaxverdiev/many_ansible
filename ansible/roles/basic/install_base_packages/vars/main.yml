@@ -23,4 +23,5 @@ base_packages:
   - ipvsadm
   - socat
   - lsof
+  - tmux
   # - docker.io

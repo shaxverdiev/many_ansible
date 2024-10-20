@@ -1,2 +1,68 @@
 ---
-# tasks file for install_haproxy_docker
+- name: Check Docker installation
+  command: docker --version && docker-compose --version
+  register: docker_version
+  # ignore_errors: true
+
+
+- name: Check Docker Compose installation
+  command: docker-compose --version
+  register: docker_compose_version
+  # ignore_errors: true
+
+
+- name: Create directory for {{ app_name }} volume_1
+  file:
+    path: "{{ volume_1 }}"
+    owner: "{{ uid }}"
+    group: "{{ gid }}"
+    state: directory
+
+
+- name: Copy {{ app_name }} config in volume_1
+  copy:
+    src: "{{ item }}"
+    dest: "{{ volume_1 }}"
+    owner: "{{ uid }}"
+    group: "{{ gid }}"
+  loop:
+    - files/haproxy.cfg
+
+
+# - name: Create directory for {{ app_name }} volume_2
+#   file:
+#     path: "{{ volume_2 }}"
+#     owner: "{{ uid }}"
+#     group: "{{ gid }}"
+#     state: directory
+
+
+- name: Copy {{ app_name }} docker-compose
+  template:
+    src: "templates/docker/{{ dc }}.j2"
+    dest: "{{ app_dir }}/{{ dc }}.yml"
+    mode: '0755'
+
+
+- name: Delete old container
+  command: "docker rm -f {{ cont_name }}"
+  ignore_errors: true
+
+
+
+- name: Build app
+  command: "docker-compose -f {{ app_dir }}/{{ dc }}.yml up -d"
+  # ignore_errors: true
+
+
+- name: Pause until the {{ app_name }} is initialized
+  pause:
+    seconds: 15
+
+
+# - name: Creds
+#   debug:
+#     msg:
+#       - ""
+#       - "{{ app_name }} address : http://{{ ansible_default_ipv4.address }}:{{ external_port }}"
+  

@@ -1,2 +1,10 @@
----
-# vars file for install_prometheus_docker
+image: "prom/prometheus:v2.36.2"
+cont_name: "{{ app_name }}"
+
+app_dir: "/opt/{{ app_name }}"
+volume_1: "{{ app_dir }}/prometheus_conf_volume"
+volume_2: "{{ app_dir }}/prometheus_data_volume"
+
+external_port: 9090
+
+dc: "{{ app_name }}"

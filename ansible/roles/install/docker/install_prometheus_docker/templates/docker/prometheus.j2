@@ -1,0 +1,17 @@
+version: '3.8'
+services: 
+  prometheus:
+    image: "{{ image }}"
+    container_name: "{{ cont_name }}"
+    volumes:
+      #- {{ volume_1 }}:/etc/prometheus/
+      - {{ volume_2 }}:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - {{ external_port }}:9090

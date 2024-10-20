@@ -1,2 +1,12 @@
----
-# vars file for install_promtail_docker
+image: "grafana/promtail"
+cont_name: "{{ app_name }}"
+
+app_dir: "/opt/{{ app_name }}"
+volume_1: "{{ app_dir }}/promtail_conf_volume"
+
+# external_port: 3100
+
+dc: "{{ app_name }}"
+
+uid: 65534
+gid: 65534

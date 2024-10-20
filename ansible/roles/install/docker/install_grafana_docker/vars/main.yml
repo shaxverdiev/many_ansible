@@ -1,7 +1,7 @@
-grafana_root_dir: "/opt/grafana"
-
 grafana_image: "grafana/grafana"
 grafana_cont_name: "grafana"
+
+grafana_root_dir: "/opt/grafana"
 
 grafana_volume: "{{ grafana_root_dir }}/grafana_volume"
 grafana_ext_app_port: 3000

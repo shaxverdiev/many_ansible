@@ -1,0 +1,11 @@
+image: "gcr.io/cadvisor/cadvisor"
+cont_name: "{{ app_name }}"
+
+app_dir: /opt/{{ app_name }}
+volume: "{{ app_dir }}/{{ app_name }}_volume"
+
+external_port: 8081
+
+dc: cadvisor
+
+

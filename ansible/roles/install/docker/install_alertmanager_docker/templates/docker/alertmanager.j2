@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  alertmanager:
+    image: {{ image }}
+    container_name: {{ cont_name }}
+    ports:
+      - {{ external_port }}:9093
+    volumes:
+      - "{{ volume }}:/etc/alertmanager/"
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'

@@ -1,0 +1,10 @@
+  loki:
+    image: "{{ image }}"
+    container_name: "{{ cont_name }}"
+    ports:
+      - "{{ external_port }}:3100"
+    command: 
+      - '-config.file=/etc/loki/loki.yaml'
+      - '-config.expand-env=true'
+    volumes:
+      - "{{ volume_1 }}/loki.yml:/etc/loki/loki.yaml"

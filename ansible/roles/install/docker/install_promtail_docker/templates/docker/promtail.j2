@@ -1,0 +1,8 @@
+ promtail:
+    image:  "{{ image }}"
+    container_name: "{{ cont_name }}"
+    volumes:
+      - "{{ volume_1 }}/promtail.yml:/etc/promtail/docker-config.yaml"
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml

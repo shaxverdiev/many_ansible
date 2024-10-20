@@ -1,0 +1,79 @@
+# ansible-playbook -i ip, playbooks/prepare_jenkins_agent_no_docker.yml -e "host_ip=all"
+---
+- name: Настройка сервера в качестве jenkins-agent (без docker)
+  hosts: "{{ hosts }}"
+  become: true
+  tasks:
+    - name: Проверка наличия пользователя с uid=gid=1000
+      shell: awk -F ':' '{ if ($3=="1000" && $4=="1000") print $1 }' /etc/passwd
+      register: login
+
+
+    - name: Присвоение переменной 'login' логина пользователя с uid=gid=1000
+      set_fact:
+        login: "{{ login.stdout }}"
+
+
+    - name: Изменение uid пользователя '{{ login }}'
+      user:
+        name: "{{ login }}"
+        uid: 1050
+      when: login|length > 0 and login != "jenkins"
+
+
+    - name: Изменение gid группы '{{ login }}'
+      group:
+        name: "{{ login }}"
+        gid: 1050
+      when: login|length > 0 and login != "jenkins"
+
+
+    - name: Создание группы 'jenkins'
+      group:
+        name: jenkins
+        state: present
+        gid: 1000
+      when: login != "jenkins"
+
+
+    - name: Создание пользователя 'jenkins'
+      user:
+        name: jenkins
+        state: present
+        uid: 1000
+        group: jenkins
+        shell: /bin/bash
+        create_home: true
+      when: login != "jenkins"
+
+
+    - name: Создание директории .ssh для пользователя jenkins
+      file:
+        path: /home/jenkins/.ssh
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: '0700'
+
+
+    - name: Копирование публичного ключа для связвания сервера и агента
+      copy:
+        content: "{{ lookup('file', './jenkins.pub') }}"
+        dest: /home/jenkins/.ssh/authorized_keys
+        owner: jenkins
+        group: jenkins
+        mode: '0600'
+
+
+    - name: Установка Mas
+      apt:
+        name: maven
+        update_cache: true
+      # when: ansible_distribution_version == "8.1"
+
+
+    - name: Установка Ansible
+      apt:
+        name: ansible-core
+        update_cache: true
+      # when: ansible_distribution_version == "8.1"

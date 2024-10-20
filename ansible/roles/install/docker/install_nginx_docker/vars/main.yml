@@ -1,0 +1,13 @@
+image: "nginx"
+cont_name: "{{ app_name }}"
+
+app_dir: "/opt/{{ app_name }}"
+volume_1: "{{ app_dir }}/{{ app_name }}_conf_volume"
+volume_2: "{{ app_dir }}/{{ app_name }}_data_volume"
+
+external_port: 8080
+
+dc: "{{ app_name }}"
+
+uid: 101
+gid: 101

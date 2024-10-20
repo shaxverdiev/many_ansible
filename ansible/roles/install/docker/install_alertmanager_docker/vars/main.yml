@@ -1,2 +1,11 @@
----
-# vars file for install_alertmanager_docker
+image: "prom/alertmanager"
+cont_name: "{{ app_name }}"
+
+app_dir: "/opt/{{ app_name }}"
+volume: "{{ app_dir }}/{{ app_name }}_volume"
+
+external_port: 9093
+
+dc: "{{ app_name }}"
+
+
