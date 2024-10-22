@@ -4,12 +4,12 @@ services:
   vault:
     image: "{{ image }}"
     container_name: "{{ cont_name }}"
+    restart: always
+    volumes:
+      - "{{ volume_2}}:/vault/file"
     ports:
       - "{{ external_port }}:8200"
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: "root-token" 
       VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
-    volumes:
-      - "{{ volume_2}}:/vault/file"
     command: "server -dev"  
-    restart: unless-stopped

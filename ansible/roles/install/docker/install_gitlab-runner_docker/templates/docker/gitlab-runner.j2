@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  gitlab-runner:
+    image: "{{ image }}"
+    container_name: "{{ cont_name }}"
+    restart: always
+    volumes:
+      - '/srv/gitlab-runner/config:/etc/gitlab-runner'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    entrypoint: >
+      /bin/bash -c "
+      if [[ -f /etc/gitlab-runner/config.toml ]]; then
+        echo 'GitLab Runner уже зарегистрирован.';
+      else
+        echo 'Регистрируем GitLab Runner...';
+        gitlab-runner register --non-interactive \
+          --url '{{ runner_url }}' \
+          --registration-token '{{ token }}' \
+          --executor '{{ runner_executor }}' \
+          --name '{{ runner_name }}' \
+          --docker-image '{{ runner_image }}' \
+          --docker-cache-dir '{{ runner_docker_cache_dir }}';
+      fi;
+      gitlab-runner run --user=gitlab-runner --working-directory=/etc/gitlab-runner && gitlab-runner restart "

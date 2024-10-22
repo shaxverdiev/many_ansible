@@ -1,10 +1,14 @@
+version: '3'
+
+services:  
   loki:
     image: "{{ image }}"
     container_name: "{{ cont_name }}"
+    restart: always
+    volumes:
+      - "{{ volume_1 }}/loki.yml:/etc/loki/loki.yaml"
     ports:
       - "{{ external_port }}:3100"
     command: 
       - '-config.file=/etc/loki/loki.yaml'
       - '-config.expand-env=true'
-    volumes:
-      - "{{ volume_1 }}/loki.yml:/etc/loki/loki.yaml"

@@ -1,6 +1,10 @@
+version: '3' 
+ 
+services: 
  promtail:
     image:  "{{ image }}"
     container_name: "{{ cont_name }}"
+    restart: always
     volumes:
       - "{{ volume_1 }}/promtail.yml:/etc/promtail/docker-config.yaml"
       - /var/lib/docker/containers:/var/lib/docker/containers:ro

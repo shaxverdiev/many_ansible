@@ -1,0 +1,18 @@
+image: "gitlab/gitlab-runner"
+cont_name: "{{ app_name }}"
+
+app_dir: /opt/{{ app_name }}
+volume_1: "{{ app_dir }}/{{ app_name }}_config_volume"
+volume_2: "{{ app_dir }}/{{ app_name }}_cache_volume"
+
+dc: gitlab-runner
+
+runner_url: "https://gitlab.com"
+runner_executor: "docker"
+runner_name: "velora"
+runner_image: "alpine"
+runner_docker_cache_dir: "/cache-docker"
+
+uid: 999
+gid: 999
+

@@ -4,12 +4,12 @@ services:
     image: "{{ image }}"
     container_name: "{{ cont_name }}"
     restart: always
-    #environment:
-    #  - RABBITMQ_DEFAULT_USER=rmuser
-    #  - RABBITMQ_DEFAULT_PASS=rmpassword
-    #  - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
     volumes:
       - "{{ volume_2 }}:/var/lib/rabbitmq"
     ports:
       - "{{ external_ui_port }}:15672"
       - "{{ external_port }}:5672"
+    #environment:
+    #  - RABBITMQ_DEFAULT_USER=rmuser
+    #  - RABBITMQ_DEFAULT_PASS=rmpassword
+    #  - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648

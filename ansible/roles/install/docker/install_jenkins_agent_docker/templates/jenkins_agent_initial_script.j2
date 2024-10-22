@@ -1,8 +1,23 @@
-docker run \
--d \
--p {{ ja_ssh_public_port }}:22 \
--v /var/run/docker.sock:/var/run/docker.sock \
--e "JENKINS_AGENT_SSH_PUBKEY={{ js_ssh_pub_key }}" \
---name {{ cont_name }} \
---restart always \
-{{ ja_image_name }} 
+# docker run \
+# -d \
+# -p {{ ja_ssh_public_port }}:22 \
+# -v /var/run/docker.sock:/var/run/docker.sock \
+# -e "JENKINS_AGENT_SSH_PUBKEY={{ js_ssh_pub_key }}" \
+# --name {{ cont_name }} \
+# --restart always \
+# {{ ja_image_name }} 
+
+
+version: '3'
+
+services:
+  jenkins-agent:
+    image: "{{ ja_image_name }}"
+    container_name: "{{ name }}"
+    restart: always
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "{{ ja_ssh_public_port }}:22"
+    environment:
+      - "JENKINS_AGENT_SSH_PUBKEY={{ js_ssh_pub_key }}"

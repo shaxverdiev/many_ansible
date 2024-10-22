@@ -1,15 +1,18 @@
- version: '3.7' 
+ version: '3'
+
+ services: 
   node-exporter:
     image: {{ image }}
     container_name: {{ app_name }}
+    restart: always
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+    ports:
+      - {{ external_port }}:9100
     command: 
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - {{ external_port }}:9100
